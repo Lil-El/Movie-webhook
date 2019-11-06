@@ -18,4 +18,5 @@
   ```
 
 - 4.配置前端：克隆前端代码,配置 webhook，同上
-- 5.安装 nvm，node，npm，docker
+- 5.服务器中运行 webhook 代码，git push 前或后端代码，webhook 日志打印对应信息
+- 6.安装 nvm，node，npm，docker
