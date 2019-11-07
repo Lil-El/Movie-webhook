@@ -3,7 +3,7 @@ WORK_PATH='/home/project/Movie-back'
 cd WORK_PATH
 echo '清除老代码'
 git reset --hard origin/master
-gir clean -f
+git clean -f
 echo '拉取新代码'
 git pull origin master
 echo '开始构建'
