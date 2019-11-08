@@ -1,6 +1,6 @@
 let http = require("http");
 let crypto = require("crypto");
-
+const SECRET = "123456";
 function sign(body) {
   return (
     `sha1=` +
@@ -23,6 +23,7 @@ let server = http.createServer((req, res) => {
       let event = req.headers["x-gitHub-event"];
       let signature = req.headers["x-hub-signature"];
       if (signature !== sign(body)) {
+        console.log("Not Allow");
         return res.end("Not Allow");
       }
     });
