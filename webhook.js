@@ -38,10 +38,10 @@ let server = http.createServer((req, res) => {
           }.sh`
         ]);
         let buffers = [];
-        child.on("data", buffer => {
+        child.stdout.on("data", buffer => {
           buffers.push(buffer);
         });
-        child.on("end", buffer => {
+        child.stdout.on("end", buffer => {
           let log = Buffer.concat(buffers);
           console.log(log);
         });
