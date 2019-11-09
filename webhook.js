@@ -1,4 +1,5 @@
 let http = require("http");
+let { spawn } = require("child_process");
 let crypto = require("crypto");
 const SECRET = "123456";
 function sign(body) {
@@ -28,8 +29,19 @@ let server = http.createServer((req, res) => {
       }
     });
     res.setHeader("Content-Type", "application/json");
-
     res.end(JSON.stringify({ ok: true }));
+    if (event == "push") {
+      let payload = JSON.parse(body);
+      let child = spawn("sh", [`./${payload.repository.name}.sh`]);
+      let buffers = [];
+      child.on("data", buffer => {
+        buffers.push(buffer);
+      });
+      child.on("end", buffer => {
+        let log = Buffer.concat(buffers);
+        console.log(log);
+      });
+    }
   } else {
     res.end("Not Found");
   }
