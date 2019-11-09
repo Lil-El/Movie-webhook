@@ -19,7 +19,7 @@ let server = http.createServer((req, res) => {
     req.on("data", function(buffer) {
       buffers.push(buffer);
     });
-    req.on("end", function(buffer) {
+    req.on("end", function() {
       let body = Buffer.concat(buffers);
       let event = req.headers["x-github-event"];
       let signature = req.headers["x-hub-signature"];
@@ -27,26 +27,26 @@ let server = http.createServer((req, res) => {
         console.log("Not Allow");
         return res.end("Not Allow");
       }
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ ok: true }));
+      if (event == "push") {
+        let payload = JSON.parse(body);
+        console.log(`PUSH CODE: ${payload.repository.name} - ${new Date()}`);
+        let child = spawn("sh", [
+          `./${
+            payload.repository.name == "Movie" ? "movie-front" : "movie-back"
+          }.sh`
+        ]);
+        let buffers = [];
+        child.on("data", buffer => {
+          buffers.push(buffer);
+        });
+        child.on("end", buffer => {
+          let log = Buffer.concat(buffers);
+          console.log(log);
+        });
+      }
     });
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: true }));
-    if (event == "push") {
-      let payload = JSON.parse(body);
-      console.log(`PUSH CODE: ${payload.repository.name} - ${new Date()}`);
-      let child = spawn("sh", [
-        `./${
-          payload.repository.name == "Movie" ? "movie-front" : "movie-back"
-        }.sh`
-      ]);
-      let buffers = [];
-      child.on("data", buffer => {
-        buffers.push(buffer);
-      });
-      child.on("end", buffer => {
-        let log = Buffer.concat(buffers);
-        console.log(log);
-      });
-    }
   } else {
     res.end("Not Found");
   }
