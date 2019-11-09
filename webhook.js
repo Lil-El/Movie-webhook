@@ -21,7 +21,7 @@ let server = http.createServer((req, res) => {
     });
     req.on("end", function(buffer) {
       let body = Buffer.concat(buffers);
-      let event = req.headers["x-gitHub-event"];
+      let event = req.headers["x-github-event"];
       let signature = req.headers["x-hub-signature"];
       if (signature !== sign(body)) {
         console.log("Not Allow");
@@ -32,7 +32,12 @@ let server = http.createServer((req, res) => {
     res.end(JSON.stringify({ ok: true }));
     if (event == "push") {
       let payload = JSON.parse(body);
-      let child = spawn("sh", [`./${payload.repository.name}.sh`]);
+      console.log(`PUSH CODE: ${payload.repository.name} - ${new Date()}`);
+      let child = spawn("sh", [
+        `./${
+          payload.repository.name == "Movie" ? "movie-front" : "movie-back"
+        }.sh`
+      ]);
       let buffers = [];
       child.on("data", buffer => {
         buffers.push(buffer);
