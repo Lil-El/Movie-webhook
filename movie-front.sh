@@ -14,5 +14,5 @@ echo '删除旧容器'
 docker container stop movie-front-container
 docker rm movie-front-container
 echo '启动容器'
-docker container run -p 8081:8081 --name movie-front-container -d movie-front:1.0.0
+docker container run -p 80:80 --name movie-front-container -d movie-front:1.0.0
 
